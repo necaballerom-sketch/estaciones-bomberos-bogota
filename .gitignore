@@ -1,0 +1,11 @@
+# Python
+__pycache__/
+*.pyc
+
+# Backups
+FOTOS/raw_originals/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
