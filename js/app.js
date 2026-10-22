@@ -20,22 +20,51 @@ class BomberosApp {
     this.autoplayProgress = 0;
     this.autoplayProgressTimer = null;
 
-    // Sound FX state
-    this.soundEnabled = true;
+    // Sound FX state (persisted in localStorage)
+    let savedSound = null;
+    try {
+      savedSound = localStorage.getItem('bomberos_sound_enabled');
+    } catch (e) {}
+    this.soundEnabled = savedSound !== null ? savedSound === 'true' : true;
     this.audioCtx = null;
+
+    // Lightbox gallery state
+    this.lightboxGallery = [];
+    this.currentLightboxIndex = 0;
+    this.isLightboxOpen = false;
 
     this.init();
   }
 
   init() {
     this.setupAudio();
+    this.setupLightboxGallery();
     this.renderSlides();
     this.renderScrubber();
     this.renderGridModal();
     this.bindEvents();
+    this.syncSoundBtn();
     
     // Show initial slide (Cover)
     this.goToSlide(0, false);
+  }
+
+  setupLightboxGallery() {
+    if (typeof STATIONS_DATA === 'undefined') return;
+    this.lightboxGallery = STATIONS_DATA.map(st => ({
+      src: st.photo,
+      title: `${st.id}: ${st.name}`,
+      subtitle: `${st.address} • ${st.localityName} (${st.company})`,
+      stationId: st.id
+    }));
+  }
+
+  syncSoundBtn() {
+    const btn = document.getElementById('btn-sound-toggle');
+    if (btn) {
+      btn.classList.toggle('muted', !this.soundEnabled);
+      btn.title = this.soundEnabled ? 'Silenciar Efectos de Audio (S)' : 'Activar Efectos de Audio (S)';
+    }
   }
 
   /* --------------------------------------------------------------------------
@@ -96,11 +125,10 @@ class BomberosApp {
 
   toggleSound() {
     this.soundEnabled = !this.soundEnabled;
-    const btn = document.getElementById('btn-sound-toggle');
-    if (btn) {
-      btn.classList.toggle('muted', !this.soundEnabled);
-      btn.title = this.soundEnabled ? 'Silenciar Efectos de Audio' : 'Activar Efectos de Audio';
-    }
+    try {
+      localStorage.setItem('bomberos_sound_enabled', this.soundEnabled ? 'true' : 'false');
+    } catch (e) {}
+    this.syncSoundBtn();
     if (this.soundEnabled) this.playSound('click');
   }
 
@@ -251,7 +279,7 @@ class BomberosApp {
 
               <div class="photo-top-actions">
                 <span class="photo-locality-tag">${st.locality}</span>
-                <button id="btn-photo-zoom-${st.id}" class="btn-zoom-photo" title="Ampliar Fotografía HD" onclick="window.appPresentation.openLightbox(document.getElementById('photo-img-${st.id}').src, '${st.name}')">
+                <button id="btn-photo-zoom-${st.id}" class="btn-zoom-photo" title="Ampliar Fotografía HD" onclick="window.appPresentation.openLightbox(document.getElementById('photo-img-${st.id}').src, '${st.id}: ${st.name}', '${st.address} &bull; ${st.localityName} (${st.company})')">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14zM10 7H9v2H7v1h2v2h1v-2h2V9h-2z"/>
                   </svg>
@@ -280,7 +308,7 @@ class BomberosApp {
                 class="station-img-element photo-fg-image" 
                 src="${encodeURI(st.photo)}" 
                 alt="${st.name}" 
-                onclick="window.appPresentation.openLightbox(this.src, '${st.name}')" 
+                onclick="window.appPresentation.openLightbox(this.src, '${st.id}: ${st.name}', '${st.address} &bull; ${st.localityName} (${st.company})')" 
                 title="Haga clic para ampliar fotografía"
               >
 
@@ -618,6 +646,7 @@ class BomberosApp {
             <div class="gis-search-box">
               <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
               <input type="text" id="gis-search-input" placeholder="Buscar estación..." oninput="window.appPresentation.searchMap(this.value)">
+              <button id="gis-search-clear" class="btn-clear-search" onclick="window.appPresentation.clearGisSearch()" title="Limpiar búsqueda">&times;</button>
             </div>
 
             <!-- Basemap selector (100% Free Open Basemaps - Zero API Key) -->
@@ -779,16 +808,94 @@ class BomberosApp {
     });
   }
 
-  openLightbox(imgSrc, title) {
+  openLightbox(imgSrc, title, subtitle) {
     this.playSound('click');
     const overlay = document.getElementById('lightbox-modal');
+    if (!overlay) return;
+
+    this.isLightboxOpen = true;
+
+    // Check if imgSrc belongs to a station in our gallery
+    let foundIndex = this.lightboxGallery.findIndex(item => {
+      if (!item.src || !imgSrc) return false;
+      const norm = s => decodeURI(s).replace(/^.*[\\\/]/, '').toLowerCase();
+      return norm(item.src) === norm(imgSrc);
+    });
+
+    if (foundIndex === -1 && title) {
+      foundIndex = this.lightboxGallery.findIndex(item => item.title.includes(title) || title.includes(item.title));
+    }
+
+    if (foundIndex !== -1) {
+      this.currentLightboxIndex = foundIndex;
+    } else {
+      this.currentLightboxIndex = -1; // Standalone image (e.g. distribution map)
+    }
+
+    this.updateLightboxView(imgSrc, title, subtitle);
+    overlay.classList.add('active');
+  }
+
+  nextLightbox() {
+    if (this.lightboxGallery.length === 0) return;
+    this.playSound('click');
+    if (this.currentLightboxIndex >= 0) {
+      this.currentLightboxIndex = (this.currentLightboxIndex + 1) % this.lightboxGallery.length;
+    } else {
+      this.currentLightboxIndex = 0;
+    }
+    const item = this.lightboxGallery[this.currentLightboxIndex];
+    this.updateLightboxView(item.src, item.title, item.subtitle);
+  }
+
+  prevLightbox() {
+    if (this.lightboxGallery.length === 0) return;
+    this.playSound('click');
+    if (this.currentLightboxIndex >= 0) {
+      this.currentLightboxIndex = (this.currentLightboxIndex - 1 + this.lightboxGallery.length) % this.lightboxGallery.length;
+    } else {
+      this.currentLightboxIndex = this.lightboxGallery.length - 1;
+    }
+    const item = this.lightboxGallery[this.currentLightboxIndex];
+    this.updateLightboxView(item.src, item.title, item.subtitle);
+  }
+
+  updateLightboxView(imgSrc, title, subtitle) {
     const img = document.getElementById('lightbox-image');
     const caption = document.getElementById('lightbox-caption');
-    if (overlay && img) {
-      img.src = imgSrc;
-      if (caption) caption.textContent = title || '';
-      overlay.classList.add('active');
+    const subcaption = document.getElementById('lightbox-subcaption');
+    const counterBadge = document.getElementById('lightbox-counter-badge');
+
+    let currentSrc = imgSrc;
+    let currentTitle = title;
+    let currentSubtitle = subtitle;
+
+    if (this.currentLightboxIndex >= 0 && this.lightboxGallery[this.currentLightboxIndex]) {
+      const item = this.lightboxGallery[this.currentLightboxIndex];
+      currentSrc = item.src;
+      currentTitle = item.title;
+      currentSubtitle = item.subtitle;
+      if (counterBadge) {
+        const pad = n => n.toString().padStart(2, '0');
+        counterBadge.textContent = `Foto ${pad(this.currentLightboxIndex + 1)} / ${pad(this.lightboxGallery.length)}`;
+      }
+    } else {
+      if (counterBadge) {
+        counterBadge.textContent = 'Mapa Oficial';
+      }
     }
+
+    if (img) {
+      img.style.opacity = '0.3';
+      img.style.transform = 'scale(0.97)';
+      img.src = encodeURI(currentSrc);
+      setTimeout(() => {
+        img.style.opacity = '1';
+        img.style.transform = 'scale(1)';
+      }, 100);
+    }
+    if (caption) caption.textContent = currentTitle || '';
+    if (subcaption) subcaption.textContent = currentSubtitle || '';
   }
 
   openGridModal() {
@@ -804,6 +911,7 @@ class BomberosApp {
   }
 
   closeModals() {
+    this.isLightboxOpen = false;
     document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
   }
 
@@ -1021,9 +1129,23 @@ class BomberosApp {
   }
 
   searchMap(query) {
+    const clearBtn = document.getElementById('gis-search-clear');
+    if (clearBtn) {
+      clearBtn.style.display = (query && query.trim().length > 0) ? 'inline-flex' : 'none';
+    }
     if (this.gisViewer) {
       this.gisViewer.search(query);
     }
+  }
+
+  clearGisSearch() {
+    this.playSound('click');
+    const input = document.getElementById('gis-search-input');
+    if (input) {
+      input.value = '';
+      input.focus();
+    }
+    this.searchMap('');
   }
 
   switchBasemap(type) {
@@ -1131,6 +1253,25 @@ class BomberosApp {
       // Don't trigger if user is typing in search input
       if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
 
+      // Handle keyboard navigation when Lightbox gallery is active
+      if (this.isLightboxOpen) {
+        if (e.key === 'ArrowRight') {
+          e.preventDefault();
+          this.nextLightbox();
+          return;
+        }
+        if (e.key === 'ArrowLeft') {
+          e.preventDefault();
+          this.prevLightbox();
+          return;
+        }
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          this.closeModals();
+          return;
+        }
+      }
+
       switch (e.key) {
         case 'ArrowRight':
         case 'PageDown':
@@ -1180,6 +1321,58 @@ class BomberosApp {
           break;
       }
     });
+
+    // Touch swipe navigation for mobile & tablet
+    let touchStartX = 0;
+    let touchStartY = 0;
+    const viewport = document.getElementById('presentation-viewport');
+    if (viewport) {
+      viewport.addEventListener('touchstart', (e) => {
+        if (!e.touches || e.touches.length === 0) return;
+        if (e.target.closest('#gis-map-canvas') || e.target.closest('input') || e.target.closest('select')) return;
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+      }, { passive: true });
+
+      viewport.addEventListener('touchend', (e) => {
+        if (!e.changedTouches || e.changedTouches.length === 0) return;
+        if (e.target.closest('#gis-map-canvas') || e.target.closest('input') || e.target.closest('select')) return;
+        const diffX = e.changedTouches[0].clientX - touchStartX;
+        const diffY = e.changedTouches[0].clientY - touchStartY;
+
+        if (Math.abs(diffX) > 50 && Math.abs(diffX) > Math.abs(diffY) * 1.4) {
+          if (diffX < 0) {
+            this.nextSlide();
+          } else {
+            this.prevSlide();
+          }
+        }
+      }, { passive: true });
+    }
+
+    // Touch swipe navigation for Lightbox
+    const lightboxModal = document.getElementById('lightbox-modal');
+    if (lightboxModal) {
+      lightboxModal.addEventListener('touchstart', (e) => {
+        if (!e.touches || e.touches.length === 0) return;
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+      }, { passive: true });
+
+      lightboxModal.addEventListener('touchend', (e) => {
+        if (!e.changedTouches || e.changedTouches.length === 0) return;
+        const diffX = e.changedTouches[0].clientX - touchStartX;
+        const diffY = e.changedTouches[0].clientY - touchStartY;
+
+        if (Math.abs(diffX) > 40 && Math.abs(diffX) > Math.abs(diffY) * 1.3) {
+          if (diffX < 0) {
+            this.nextLightbox();
+          } else {
+            this.prevLightbox();
+          }
+        }
+      }, { passive: true });
+    }
 
     // Close modals on clicking overlay background
     document.querySelectorAll('.modal-overlay').forEach(overlay => {

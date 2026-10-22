@@ -300,12 +300,18 @@ class BomberosMapViewer {
     // Update Counter Element
     const counterEl = document.getElementById('gis-visible-counter');
     if (counterEl) {
-      counterEl.textContent = `${visibleCount} Estaciones`;
+      if (visibleCount === 1) {
+        counterEl.textContent = '1 Estación activa';
+      } else if (visibleCount === 0) {
+        counterEl.textContent = '0 Estaciones (sin coincidencias)';
+      } else {
+        counterEl.textContent = `${visibleCount} Estaciones visibles`;
+      }
     }
 
-    if (this.currentFilter !== 'all' && visibleCount > 0 && bounds.isValid()) {
-      this.map.fitBounds(bounds, { padding: [60, 60], maxZoom: 13, animate: true });
-    } else if (this.currentFilter === 'all') {
+    if ((this.currentFilter !== 'all' || this.searchQuery) && visibleCount > 0 && bounds.isValid()) {
+      this.map.fitBounds(bounds, { padding: [60, 60], maxZoom: 14, animate: true });
+    } else if (this.currentFilter === 'all' && !this.searchQuery) {
       this.resetView();
     }
   }

@@ -4,6 +4,7 @@ __pycache__/
 
 # Backups
 FOTOS/raw_originals/
+BIM/
 
 # Sistema operativo
 .DS_Store

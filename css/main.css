@@ -502,3 +502,137 @@ body::before {
   box-shadow: 0 0 8px rgba(239, 68, 68, 0.8);
   transition: width 0.1s linear;
 }
+
+/* ==========================================================================
+   ADAPTABILIDAD RESPONSIVA Y EXPERIENCIA MÓVIL / TABLET
+   ========================================================================== */
+@media (max-width: 1024px) {
+  .app-header {
+    padding: 0 16px;
+  }
+
+  .brand-section {
+    gap: 12px;
+  }
+
+  .slide-view {
+    padding: 16px 16px 8px 16px;
+  }
+
+  .stations-scrubber-wrapper {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --header-height: 56px;
+    --footer-height: 64px;
+  }
+
+  .app-header {
+    height: var(--header-height);
+    padding: 0 12px;
+  }
+
+  .brand-logo-wrap {
+    padding: 2px 5px;
+  }
+
+  .brand-logo-img {
+    height: 26px;
+  }
+
+  .brand-main-title {
+    font-size: 13px;
+    letter-spacing: 0.5px;
+  }
+
+  .brand-main-title .badge-gov {
+    display: none;
+  }
+
+  .brand-sub-title {
+    display: none;
+  }
+
+  .header-center-info {
+    display: none;
+  }
+
+  .header-actions {
+    gap: 6px;
+  }
+
+  .btn-header {
+    padding: 6px 8px;
+    font-size: 11px;
+    border-radius: 6px;
+  }
+
+  .btn-header span {
+    display: none;
+  }
+
+  .btn-header svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .slide-view {
+    padding: 12px 10px 6px 10px;
+  }
+
+  .app-footer {
+    height: var(--footer-height);
+    padding: 0 10px;
+    gap: 8px;
+  }
+
+  .nav-circle-btn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .nav-circle-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .footer-quick-tools {
+    display: none;
+  }
+
+  .stations-scrubber-wrapper {
+    padding: 4px 8px;
+    gap: 4px;
+    border-radius: 18px;
+  }
+
+  .scrubber-item {
+    padding: 4px 8px;
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-header {
+    padding: 0 8px;
+  }
+
+  .brand-main-title {
+    font-size: 11.5px;
+  }
+
+  .header-actions {
+    gap: 4px;
+  }
+
+  .btn-header {
+    padding: 5px 6px;
+  }
+
+  .app-footer {
+    padding: 0 6px;
+  }
+}

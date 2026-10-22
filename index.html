@@ -160,13 +160,42 @@
   </div>
 
   <!-- ==========================================================================
-       MODAL 2: LIGHTBOX DE FOTOGRAFÍAS EN ALTA RESOLUCIÓN
+       MODAL 2: LIGHTBOX DE FOTOGRAFÍAS EN ALTA RESOLUCIÓN (GALERÍA NAVEGABLE)
        ========================================================================== -->
   <div id="lightbox-modal" class="modal-overlay">
-    <div style="position: relative; display: flex; flex-direction: column; align-items: center;">
-      <button class="btn-close-modal" onclick="window.appPresentation.closeModals()" style="position: absolute; top: -45px; right: 0; width: 38px; height: 38px; font-size: 22px;">&times;</button>
-      <img id="lightbox-image" class="lightbox-img-viewer" src="" alt="Fotografía Estación">
-      <div id="lightbox-caption" style="color: #fff; font-size: 14px; font-weight: 700; margin-top: 14px; text-shadow: 0 2px 8px rgba(0,0,0,0.8); text-align: center;"></div>
+    <div class="lightbox-dialog-container">
+      <!-- Lightbox Header / Controls -->
+      <div class="lightbox-top-bar">
+        <div id="lightbox-counter-badge" class="lightbox-counter-badge">Foto 01 / 20</div>
+        <div class="lightbox-top-actions">
+          <button class="lightbox-action-btn" onclick="window.appPresentation.prevLightbox()" title="Foto Anterior (Flecha Izquierda)">
+            <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+          </button>
+          <button class="lightbox-action-btn" onclick="window.appPresentation.nextLightbox()" title="Siguiente Foto (Flecha Derecha)">
+            <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+          </button>
+          <button class="btn-close-modal" onclick="window.appPresentation.closeModals()" title="Cerrar (Esc)">&times;</button>
+        </div>
+      </div>
+
+      <!-- Lightbox Image Stage with Floating Arrows -->
+      <div class="lightbox-stage">
+        <button class="lightbox-floating-arrow prev" onclick="window.appPresentation.prevLightbox()" title="Foto Anterior (Flecha Izquierda)">
+          <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+        </button>
+        <div class="lightbox-image-wrap">
+          <img id="lightbox-image" class="lightbox-img-viewer" src="" alt="Fotografía Estación">
+        </div>
+        <button class="lightbox-floating-arrow next" onclick="window.appPresentation.nextLightbox()" title="Siguiente Foto (Flecha Derecha)">
+          <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+        </button>
+      </div>
+
+      <!-- Lightbox Footer Caption -->
+      <div class="lightbox-caption-box">
+        <div id="lightbox-caption" class="lightbox-caption-title"></div>
+        <div id="lightbox-subcaption" class="lightbox-caption-sub"></div>
+      </div>
     </div>
   </div>
 
@@ -236,6 +265,7 @@
         </div>
       </div>
     </div>
+  </div>
   <!-- Scrubber Floating Hover Preview Tooltip -->
   <div id="scrubber-floating-tooltip" class="scrubber-floating-tooltip"></div>
 
