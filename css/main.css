@@ -255,10 +255,9 @@ body::before {
   opacity: 0;
   transform: scale(0.97) translateY(12px);
   transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1), transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
-  padding: 20px 28px 10px 28px;
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255,255,255,0.2) transparent;
+  padding: 14px 22px 10px 22px;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .slide-view.active {

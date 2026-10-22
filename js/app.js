@@ -275,6 +275,12 @@ class BomberosApp {
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
                   <span>Google Street View 360°</span>
                 </button>
+                ${st.hasBim ? `
+                  <button id="btn-mode-bim-${st.id}" class="photo-mode-btn bim-btn" onclick="window.appPresentation.openBimModal('${st.id}')" title="Abrir Modelo BIM 3D Interactivo">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 2.5l5 2.88v5.76l-5 2.88-5-2.88V8.38l5-2.88zM6.5 9.17l4.5 2.59v5.18l-4.5-2.59V9.17zm11 0v5.18l-4.5 2.59v-5.18l4.5-2.59zM12 7.23l3.5 2.02-3.5 2.02-3.5-2.02L12 7.23z"/></svg>
+                    <span>Modelo BIM 3D</span>
+                  </button>
+                ` : ''}
               </div>
 
               <div class="photo-top-actions">
@@ -447,6 +453,38 @@ class BomberosApp {
               </div>
             </div>
 
+            ${st.hasBim ? `
+              <!-- Ficha Especial Modelo Digital BIM 3D -->
+              <div class="data-section-card bim-station-highlight-card">
+                <div class="data-section-title" style="color: #f59e0b;">
+                  <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 2.5l5 2.88v5.76l-5 2.88-5-2.88V8.38l5-2.88zM6.5 9.17l4.5 2.59v5.18l-4.5-2.59V9.17zm11 0v5.18l-4.5 2.59v-5.18l4.5-2.59zM12 7.23l3.5 2.02-3.5 2.02-3.5-2.02L12 7.23z"/></svg>
+                  <span>Modelo BIM 3D &bull; Levantamiento Arquitectónico</span>
+                  <span class="badge-bim-status">3D Interactivo</span>
+                </div>
+                <div class="bim-card-content">
+                  <div class="bim-card-thumb-wrap" onclick="window.appPresentation.openBimModal('${st.id}')" title="Haga clic para abrir el visor 3D">
+                    <img src="${st.bimThumb || 'BIM%20aplicacion/B8_Bosa_vista_general.png'}" alt="Vista 3D ${st.name}" class="bim-card-thumb">
+                    <div class="bim-card-thumb-overlay">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="#fff"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+                    </div>
+                  </div>
+                  <div class="bim-card-desc">
+                    <div class="bim-card-text">
+                      Geometría tridimensional de la estación: dos plantas arquitectónicas, columnas, muros, patio de maniobras y simulación de parque automotor.
+                    </div>
+                    <div class="bim-card-actions">
+                      <button class="btn-open-bim" onclick="window.appPresentation.openBimModal('${st.id}')">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 2.5l5 2.88v5.76l-5 2.88-5-2.88V8.38l5-2.88zM6.5 9.17l4.5 2.59v5.18l-4.5-2.59V9.17zm11 0v5.18l-4.5 2.59v-5.18l4.5-2.59zM12 7.23l3.5 2.02-3.5 2.02-3.5-2.02L12 7.23z"/>
+                        </svg>
+                        <span>Explorar Modelo BIM 3D</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ` : ''}
+
             <!-- Barra de Localización Geográfica y Enlace Directo al Mapa GIS -->
             <div class="station-location-bar">
               <div class="station-coords-pill">
@@ -474,126 +512,129 @@ class BomberosApp {
     div.dataset.title = 'Distribución Operativa de Estaciones';
 
     div.innerHTML = `
-      <div class="station-header-bar" style="margin-bottom: 14px;">
-        <div class="station-title-block">
-          <div class="station-code-badge" style="background: linear-gradient(135deg, #0284c7, #8b5cf6);">
-            DIST
+      <div class="station-slide-container">
+        <!-- Top Banner -->
+        <div class="station-header-bar">
+          <div class="station-title-block">
+            <div class="station-code-badge" style="background: linear-gradient(135deg, #0284c7, #8b5cf6);">
+              DIST
+            </div>
+            <div class="station-name-text">
+              <div class="station-main-name">DISTRIBUCIÓN OPERATIVA DE ESTACIONES DE BOMBEROS</div>
+              <div class="station-subtitle-honor">Organización Operacional por Localidades, Compañías y Distritos</div>
+            </div>
           </div>
-          <div class="station-name-text">
-            <div class="station-main-name">DISTRIBUCIÓN OPERATIVA DE ESTACIONES DE BOMBEROS</div>
-            <div class="station-subtitle-honor">Organización Operacional por Localidades, Compañías y Distritos</div>
-          </div>
-        </div>
-        <div class="station-header-pills">
-          <button class="btn-header" onclick="window.appPresentation.openLightbox('FOTOS/DISTRIBUCION OPERATIVA DE ESTACIONES DE BOMBEROS.jpeg', 'Mapa Oficial de Distribución Operativa')">
-            <svg width="14" height="14" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5z"/></svg>
-            <span>Ver Imagen en Pantalla Completa</span>
-          </button>
-        </div>
-      </div>
-
-      <div class="distribution-slide-container">
-        <!-- Official Distribution Image -->
-        <div class="distribution-image-card">
-          <div class="distribution-img-wrap" onclick="window.appPresentation.openLightbox('FOTOS/DISTRIBUCION OPERATIVA DE ESTACIONES DE BOMBEROS.jpeg', 'Distribución Operativa de Estaciones por Localidad')">
-            <img src="FOTOS/DISTRIBUCION%20OPERATIVA%20DE%20ESTACIONES%20DE%20BOMBEROS.jpeg" alt="Distribución Operativa Bomberos Bogotá">
-          </div>
-          <div class="photo-caption-bar">
-            <span class="photo-caption-text">
-              Haga clic sobre el mapa esquemático para ampliar y explorar en alta definición la distribución territorial oficial.
-            </span>
+          <div class="station-header-pills">
+            <button class="btn-header" onclick="window.appPresentation.openLightbox('FOTOS/DISTRIBUCION OPERATIVA DE ESTACIONES DE BOMBEROS.jpeg', 'Mapa Oficial de Distribución Operativa')">
+              <svg width="14" height="14" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5z"/></svg>
+              <span>Ver Imagen en Pantalla Completa</span>
+            </button>
           </div>
         </div>
 
-        <!-- Companies & Leaders Breakdown -->
-        <div class="distribution-info-column">
-          <!-- Distrito 1 -->
-          <div style="font-size: 13px; font-weight: 800; color: #38bdf8; text-transform: uppercase; letter-spacing: 0.8px; margin-top: 2px;">
-            DISTRITO 1 - NORTE
-          </div>
-
-          <div class="company-card" style="--comp-border: var(--comp-1);">
-            <div class="company-header-row">
-              <div class="company-title">Compañía 1</div>
-              <div class="company-leader-name">Teniente Fabio Sastoque</div>
+        <div class="distribution-slide-container">
+          <!-- Official Distribution Image -->
+          <div class="distribution-image-card">
+            <div class="distribution-img-wrap" onclick="window.appPresentation.openLightbox('FOTOS/DISTRIBUCION OPERATIVA DE ESTACIONES DE BOMBEROS.jpeg', 'Distribución Operativa de Estaciones por Localidad')">
+              <img src="FOTOS/DISTRIBUCION%20OPERATIVA%20DE%20ESTACIONES%20DE%20BOMBEROS.jpeg" alt="Distribución Operativa Bomberos Bogotá">
             </div>
-            <div style="font-size: 11.5px; color: var(--text-muted);">
-              <b>Jurisdicción:</b> Usaquén, Chapinero, Suba (Oriental).
-            </div>
-            <div class="company-stations-pills">
-              <span class="badge-station-tag" onclick="window.appPresentation.goToStation('B-1')">B-1 Chapinero</span>
-              <span class="badge-station-tag" onclick="window.appPresentation.goToStation('B-13')">B-13 Caobos Salazar</span>
-              <span class="badge-station-tag" onclick="window.appPresentation.goToStation('B-14')">B-14 Bicentenario</span>
+            <div class="photo-caption-bar">
+              <span class="photo-caption-text">
+                Haga clic sobre el mapa esquemático para ampliar y explorar en alta definición la distribución territorial oficial.
+              </span>
             </div>
           </div>
 
-          <div class="company-card" style="--comp-border: var(--comp-2);">
-            <div class="company-header-row">
-              <div class="company-title">Compañía 2</div>
-              <div class="company-leader-name">Capitán Ciprián Bohórquez</div>
+          <!-- Companies & Leaders Breakdown -->
+          <div class="distribution-info-column">
+            <!-- Distrito 1 -->
+            <div class="district-badge-label distrito-1-label">
+              DISTRITO 1 - NORTE
             </div>
-            <div style="font-size: 11.5px; color: var(--text-muted);">
-              <b>Jurisdicción:</b> Suba, Engativá, Fontibón, Barrios Unidos.
-            </div>
-            <div class="company-stations-pills">
-              <span class="badge-station-tag" onclick="window.appPresentation.goToStation('B-6')">B-6 Fontibón</span>
-              <span class="badge-station-tag" onclick="window.appPresentation.goToStation('B-7')">B-7 Ferias</span>
-              <span class="badge-station-tag" onclick="window.appPresentation.goToStation('B-12')">B-12 Suba</span>
-              <span class="badge-station-tag" onclick="window.appPresentation.goToStation('B-15')">B-15 Garcés Navas</span>
-            </div>
-          </div>
 
-          <!-- Distrito 2 -->
-          <div style="font-size: 13px; font-weight: 800; color: #a78bfa; text-transform: uppercase; letter-spacing: 0.8px; margin-top: 8px;">
-            DISTRITO 2 - SUR
-          </div>
+            <div class="company-card" style="--comp-border: var(--comp-1);">
+              <div class="company-header-row">
+                <div class="company-title">Compañía 1</div>
+                <div class="company-leader-name">Teniente Fabio Sastoque</div>
+              </div>
+              <div style="font-size: 11px; color: var(--text-muted);">
+                <b>Jurisdicción:</b> Usaquén, Chapinero, Suba (Oriental).
+              </div>
+              <div class="company-stations-pills">
+                <span class="badge-station-tag" onclick="window.appPresentation.goToStation('B-1')">B-1 Chapinero</span>
+                <span class="badge-station-tag" onclick="window.appPresentation.goToStation('B-13')">B-13 Caobos Salazar</span>
+                <span class="badge-station-tag" onclick="window.appPresentation.goToStation('B-14')">B-14 Bicentenario</span>
+              </div>
+            </div>
 
-          <div class="company-card" style="--comp-border: var(--comp-3);">
-            <div class="company-header-row">
-              <div class="company-title">Compañía 3</div>
-              <div class="company-leader-name">Capitán Rodolfo Barrera</div>
+            <div class="company-card" style="--comp-border: var(--comp-2);">
+              <div class="company-header-row">
+                <div class="company-title">Compañía 2</div>
+                <div class="company-leader-name">Capitán Ciprián Bohórquez</div>
+              </div>
+              <div style="font-size: 11px; color: var(--text-muted);">
+                <b>Jurisdicción:</b> Suba, Engativá, Fontibón, Barrios Unidos.
+              </div>
+              <div class="company-stations-pills">
+                <span class="badge-station-tag" onclick="window.appPresentation.goToStation('B-6')">B-6 Fontibón</span>
+                <span class="badge-station-tag" onclick="window.appPresentation.goToStation('B-7')">B-7 Ferias</span>
+                <span class="badge-station-tag" onclick="window.appPresentation.goToStation('B-12')">B-12 Suba</span>
+                <span class="badge-station-tag" onclick="window.appPresentation.goToStation('B-15')">B-15 Garcés Navas</span>
+              </div>
             </div>
-            <div style="font-size: 11.5px; color: var(--text-muted);">
-              <b>Jurisdicción:</b> Santa Fe, Candelaria, Los Mártires, Puente Aranda, Teusaquillo, Kennedy.
-            </div>
-            <div class="company-stations-pills">
-              <span class="badge-station-tag" onclick="window.appPresentation.goToStation('B-2')">B-2 Central</span>
-              <span class="badge-station-tag" onclick="window.appPresentation.goToStation('B-4')">B-4 Puente Aranda</span>
-              <span class="badge-station-tag" style="background: rgba(225,29,72,0.25); border-color:#e11d48;" onclick="window.appPresentation.goToStation('CO')">CO Comando Central</span>
-              <span class="badge-station-tag" onclick="window.appPresentation.goToStation('B-5')">B-5 Kennedy</span>
-              <span class="badge-station-tag" onclick="window.appPresentation.goToStation('B-17')">B-17 Centro Histórico</span>
-            </div>
-          </div>
 
-          <div class="company-card" style="--comp-border: var(--comp-4);">
-            <div class="company-header-row">
-              <div class="company-title">Compañía 4</div>
-              <div class="company-leader-name">Capitán Jairo Bolaños</div>
+            <!-- Distrito 2 -->
+            <div class="district-badge-label distrito-2-label">
+              DISTRITO 2 - SUR
             </div>
-            <div style="font-size: 11.5px; color: var(--text-muted);">
-              <b>Jurisdicción:</b> Antonio Nariño, Rafael Uribe Uribe, San Cristóbal, Usme.
-            </div>
-            <div class="company-stations-pills">
-              <span class="badge-station-tag" onclick="window.appPresentation.goToStation('B-3')">B-3 Restrepo</span>
-              <span class="badge-station-tag" onclick="window.appPresentation.goToStation('B-9')">B-9 Bellavista</span>
-              <span class="badge-station-tag" onclick="window.appPresentation.goToStation('B-10')">B-10 Marichuela</span>
-            </div>
-          </div>
 
-          <div class="company-card" style="--comp-border: var(--comp-5);">
-            <div class="company-header-row">
-              <div class="company-title">Compañía 5</div>
-              <div class="company-leader-name">Capitán Edinson Panqueva</div>
+            <div class="company-card" style="--comp-border: var(--comp-3);">
+              <div class="company-header-row">
+                <div class="company-title">Compañía 3</div>
+                <div class="company-leader-name">Capitán Rodolfo Barrera</div>
+              </div>
+              <div style="font-size: 11px; color: var(--text-muted);">
+                <b>Jurisdicción:</b> Santa Fe, Candelaria, Los Mártires, Puente Aranda, Teusaquillo, Kennedy.
+              </div>
+              <div class="company-stations-pills">
+                <span class="badge-station-tag" onclick="window.appPresentation.goToStation('B-2')">B-2 Central</span>
+                <span class="badge-station-tag" onclick="window.appPresentation.goToStation('B-4')">B-4 Puente Aranda</span>
+                <span class="badge-station-tag" style="background: rgba(225,29,72,0.25); border-color:#e11d48;" onclick="window.appPresentation.goToStation('CO')">CO Comando Central</span>
+                <span class="badge-station-tag" onclick="window.appPresentation.goToStation('B-5')">B-5 Kennedy</span>
+                <span class="badge-station-tag" onclick="window.appPresentation.goToStation('B-17')">B-17 Centro Histórico</span>
+              </div>
             </div>
-            <div style="font-size: 11.5px; color: var(--text-muted);">
-              <b>Jurisdicción:</b> Bosa, Tunjuelito, Ciudad Bolívar, Sumapaz.
+
+            <div class="company-card" style="--comp-border: var(--comp-4);">
+              <div class="company-header-row">
+                <div class="company-title">Compañía 4</div>
+                <div class="company-leader-name">Capitán Jairo Bolaños</div>
+              </div>
+              <div style="font-size: 11px; color: var(--text-muted);">
+                <b>Jurisdicción:</b> Antonio Nariño, Rafael Uribe Uribe, San Cristóbal, Usme.
+              </div>
+              <div class="company-stations-pills">
+                <span class="badge-station-tag" onclick="window.appPresentation.goToStation('B-3')">B-3 Restrepo</span>
+                <span class="badge-station-tag" onclick="window.appPresentation.goToStation('B-9')">B-9 Bellavista</span>
+                <span class="badge-station-tag" onclick="window.appPresentation.goToStation('B-10')">B-10 Marichuela</span>
+              </div>
             </div>
-            <div class="company-stations-pills">
-              <span class="badge-station-tag" onclick="window.appPresentation.goToStation('B-8')">B-8 Bosa</span>
-              <span class="badge-station-tag" onclick="window.appPresentation.goToStation('B-11')">B-11 Candelaria</span>
-              <span class="badge-station-tag" onclick="window.appPresentation.goToStation('B-16')">B-16 Venecia</span>
-              <span class="badge-station-tag" onclick="window.appPresentation.goToStation('B-18')">B-18 Casa de Teja</span>
-              <span class="badge-station-tag" onclick="window.appPresentation.goToStation('B-19')">B-19 La Cabaña</span>
+
+            <div class="company-card" style="--comp-border: var(--comp-5);">
+              <div class="company-header-row">
+                <div class="company-title">Compañía 5</div>
+                <div class="company-leader-name">Capitán Edinson Panqueva</div>
+              </div>
+              <div style="font-size: 11px; color: var(--text-muted);">
+                <b>Jurisdicción:</b> Bosa, Tunjuelito, Ciudad Bolívar, Sumapaz.
+              </div>
+              <div class="company-stations-pills">
+                <span class="badge-station-tag" onclick="window.appPresentation.goToStation('B-8')">B-8 Bosa</span>
+                <span class="badge-station-tag" onclick="window.appPresentation.goToStation('B-11')">B-11 Candelaria</span>
+                <span class="badge-station-tag" onclick="window.appPresentation.goToStation('B-16')">B-16 Venecia</span>
+                <span class="badge-station-tag" onclick="window.appPresentation.goToStation('B-18')">B-18 Casa de Teja</span>
+                <span class="badge-station-tag" onclick="window.appPresentation.goToStation('B-19')">B-19 La Cabaña</span>
+              </div>
             </div>
           </div>
         </div>
@@ -615,48 +656,49 @@ class BomberosApp {
         <!-- Floating Toolbar -->
         <div class="gis-floating-toolbar">
           <div class="gis-filters-group">
-            <span style="font-size: 11px; font-weight: 800; color: var(--emergency-gold); text-transform: uppercase; margin-right: 6px;">Filtros:</span>
-            <button class="filter-btn active" data-filter="all" onclick="window.appPresentation.filterMap('all', this)">
-              Todas (19 + CO)
+            <button class="filter-btn active" data-filter="all" onclick="window.appPresentation.filterMap('all', this)" title="Mostrar todas las 19 estaciones + Comando Central">
+              Todas (20)
             </button>
-            <button class="filter-btn" data-filter="distrito1" style="--filter-color: #0284c7;" onclick="window.appPresentation.filterMap('distrito1', this)">
-              Distrito 1 - Norte
+            <div class="filter-separator"></div>
+            <button class="filter-btn" data-filter="distrito1" style="--filter-color: #0284c7;" onclick="window.appPresentation.filterMap('distrito1', this)" title="Distrito 1 - Norte (Compañías 1 y 2)">
+              D-1 Norte
             </button>
-            <button class="filter-btn" data-filter="distrito2" style="--filter-color: #8b5cf6;" onclick="window.appPresentation.filterMap('distrito2', this)">
-              Distrito 2 - Sur
+            <button class="filter-btn" data-filter="distrito2" style="--filter-color: #8b5cf6;" onclick="window.appPresentation.filterMap('distrito2', this)" title="Distrito 2 - Sur (Compañías 3, 4 y 5)">
+              D-2 Sur
             </button>
-            <button class="filter-btn" data-filter="comp_1" style="--filter-color: #0284c7;" onclick="window.appPresentation.filterMap('comp_1', this)">
-              Comp. 1
+            <div class="filter-separator"></div>
+            <button class="filter-btn comp-btn" data-filter="comp_1" style="--filter-color: #0284c7;" onclick="window.appPresentation.filterMap('comp_1', this)" title="Compañía 1 (Tte. Sastoque: Usaquén, Chapinero, Suba)">
+              C-1
             </button>
-            <button class="filter-btn" data-filter="comp_2" style="--filter-color: #ea580c;" onclick="window.appPresentation.filterMap('comp_2', this)">
-              Comp. 2
+            <button class="filter-btn comp-btn" data-filter="comp_2" style="--filter-color: #ea580c;" onclick="window.appPresentation.filterMap('comp_2', this)" title="Compañía 2 (Cap. Bohórquez: Engativá, Fontibón, Suba, B. Unidos)">
+              C-2
             </button>
-            <button class="filter-btn" data-filter="comp_3" style="--filter-color: #10b981;" onclick="window.appPresentation.filterMap('comp_3', this)">
-              Comp. 3
+            <button class="filter-btn comp-btn" data-filter="comp_3" style="--filter-color: #10b981;" onclick="window.appPresentation.filterMap('comp_3', this)" title="Compañía 3 (Cap. Barrera: Santa Fe, Candelaria, Mártires, Puente Aranda, Kennedy)">
+              C-3
             </button>
-            <button class="filter-btn" data-filter="comp_4" style="--filter-color: #eab308;" onclick="window.appPresentation.filterMap('comp_4', this)">
-              Comp. 4
+            <button class="filter-btn comp-btn" data-filter="comp_4" style="--filter-color: #eab308;" onclick="window.appPresentation.filterMap('comp_4', this)" title="Compañía 4 (Cap. Bolaños: Antonio Nariño, Rafael Uribe, San Cristóbal, Usme)">
+              C-4
             </button>
-            <button class="filter-btn" data-filter="comp_5" style="--filter-color: #8b5cf6;" onclick="window.appPresentation.filterMap('comp_5', this)">
-              Comp. 5
+            <button class="filter-btn comp-btn" data-filter="comp_5" style="--filter-color: #8b5cf6;" onclick="window.appPresentation.filterMap('comp_5', this)" title="Compañía 5 (Cap. Panqueva: Bosa, Tunjuelito, Ciudad Bolívar, Sumapaz)">
+              C-5
             </button>
           </div>
 
-          <div style="display: flex; align-items: center; gap: 10px;">
+          <div class="gis-toolbar-controls">
             <div class="gis-search-box">
               <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-              <input type="text" id="gis-search-input" placeholder="Buscar estación..." oninput="window.appPresentation.searchMap(this.value)">
+              <input type="text" id="gis-search-input" placeholder="Buscar..." oninput="window.appPresentation.searchMap(this.value)">
               <button id="gis-search-clear" class="btn-clear-search" onclick="window.appPresentation.clearGisSearch()" title="Limpiar búsqueda">&times;</button>
             </div>
 
-            <!-- Basemap selector (100% Free Open Basemaps - Zero API Key) -->
-            <select id="gis-basemap-select" onchange="window.appPresentation.switchBasemap(this.value)" style="background: rgba(0,0,0,0.4); border: 1px solid var(--border-subtle); color: #fff; padding: 5px 8px; border-radius: 8px; font-size: 11px; outline: none; cursor: pointer;">
-              <option value="dark">Mapa Oscuro (Esri Dark Canvas)</option>
-              <option value="streets">Calles (OpenStreetMap)</option>
-              <option value="satellite">Satélite (Esri World Imagery)</option>
+            <!-- Basemap selector: Satélite predeterminado -->
+            <select id="gis-basemap-select" onchange="window.appPresentation.switchBasemap(this.value)" class="gis-basemap-select" title="Seleccionar capa base cartográfica">
+              <option value="satellite" selected>Satélite</option>
+              <option value="dark">Oscuro</option>
+              <option value="streets">Calles</option>
             </select>
 
-            <button class="btn-header" onclick="window.appPresentation.resetMapView()" title="Centrar Bogotá">
+            <button class="btn-header btn-gis-center" onclick="window.appPresentation.resetMapView()" title="Centrar Bogotá">
               <svg width="14" height="14" viewBox="0 0 24 24"><path d="M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0 0 13 3.06V1h-2v2.06A8.994 8.994 0 0 0 3.06 11H1v2h2.06A8.994 8.994 0 0 0 11 20.94V23h2v-2.06A8.994 8.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>
             </button>
           </div>
@@ -668,14 +710,14 @@ class BomberosApp {
         <!-- Legend Dock -->
         <div class="gis-legend-dock">
           <div class="gis-legend-title">Áreas por Compañía</div>
-          <div class="legend-item-row"><span class="legend-color-box" style="background: #0284c7;"></span><span>Compañía 1 (Tte. Sastoque)</span></div>
-          <div class="legend-item-row"><span class="legend-color-box" style="background: #ea580c;"></span><span>Compañía 2 (Cap. Bohórquez)</span></div>
-          <div class="legend-item-row"><span class="legend-color-box" style="background: #10b981;"></span><span>Compañía 3 (Cap. Barrera)</span></div>
-          <div class="legend-item-row"><span class="legend-color-box" style="background: #eab308;"></span><span>Compañía 4 (Cap. Bolaños)</span></div>
-          <div class="legend-item-row"><span class="legend-color-box" style="background: #8b5cf6;"></span><span>Compañía 5 (Cap. Panqueva)</span></div>
-          <div class="legend-item-row"><span class="legend-color-box" style="background: #e11d48;"></span><span>Edificio Comando Central (CO)</span></div>
+          <div class="legend-item-row"><span class="legend-color-box" style="background: #0284c7;"></span><span>C-1 (Tte. Sastoque)</span></div>
+          <div class="legend-item-row"><span class="legend-color-box" style="background: #ea580c;"></span><span>C-2 (Cap. Bohórquez)</span></div>
+          <div class="legend-item-row"><span class="legend-color-box" style="background: #10b981;"></span><span>C-3 (Cap. Barrera)</span></div>
+          <div class="legend-item-row"><span class="legend-color-box" style="background: #eab308;"></span><span>C-4 (Cap. Bolaños)</span></div>
+          <div class="legend-item-row"><span class="legend-color-box" style="background: #8b5cf6;"></span><span>C-5 (Cap. Panqueva)</span></div>
+          <div class="legend-item-row"><span class="legend-color-box" style="background: #e11d48;"></span><span>Comando Central (CO)</span></div>
           <div id="gis-visible-counter" style="margin-top: 4px; padding-top: 4px; border-top: 1px solid rgba(255,255,255,0.1); color: var(--emergency-gold); font-weight: 700;">
-            19 Estaciones + CO
+            20 Estaciones visibles
           </div>
         </div>
       </div>
@@ -908,6 +950,27 @@ class BomberosApp {
     this.playSound('click');
     const overlay = document.getElementById('infra-modal');
     if (overlay) overlay.classList.add('active');
+  }
+
+  openBimModal(stationId = 'B-8') {
+    this.playSound('click');
+    const overlay = document.getElementById('bim-modal');
+    const iframe = document.getElementById('bim-viewer-frame');
+    if (iframe) {
+      const targetSrc = 'BIM aplicacion/B8_Bosa_visor_3D.html';
+      if (!iframe.src || !iframe.src.includes('B8_Bosa_visor_3D.html')) {
+        iframe.src = targetSrc;
+      }
+    }
+    if (overlay) overlay.classList.add('active');
+  }
+
+  loadBimStation(stationId) {
+    this.playSound('click');
+    const iframe = document.getElementById('bim-viewer-frame');
+    if (iframe && stationId === 'B-8') {
+      iframe.src = 'BIM aplicacion/B8_Bosa_visor_3D.html';
+    }
   }
 
   closeModals() {

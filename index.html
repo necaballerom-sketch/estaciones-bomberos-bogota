@@ -85,6 +85,14 @@
           <span>Sedes Extra</span>
         </button>
 
+        <!-- Botón Modelos BIM 3D -->
+        <button class="btn-header btn-header-bim" onclick="window.appPresentation.openBimModal('B-8')" title="Modelos BIM 3D de Estaciones">
+          <svg viewBox="0 0 24 24">
+            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 2.5l5 2.88v5.76l-5 2.88-5-2.88V8.38l5-2.88zM6.5 9.17l4.5 2.59v5.18l-4.5-2.59V9.17zm11 0v5.18l-4.5 2.59v-5.18l4.5-2.59zM12 7.23l3.5 2.02-3.5 2.02-3.5-2.02L12 7.23z"/>
+          </svg>
+          <span>Modelos BIM</span>
+        </button>
+
         <!-- Botón Sonido FX -->
         <button id="btn-sound-toggle" class="btn-header" onclick="window.appPresentation.toggleSound()" title="Efectos de Audio (S)">
           <svg viewBox="0 0 24 24">
@@ -266,6 +274,34 @@
       </div>
     </div>
   </div>
+  <!-- ==========================================================================
+       MODAL 4: MODELO DIGITAL BIM 3D INTERACTIVO
+       ========================================================================== -->
+  <div id="bim-modal" class="modal-overlay">
+    <div class="modal-content-box bim-modal-box">
+      <div class="modal-header">
+        <div class="modal-title">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="#f59e0b">
+            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 2.5l5 2.88v5.76l-5 2.88-5-2.88V8.38l5-2.88zM6.5 9.17l4.5 2.59v5.18l-4.5-2.59V9.17zm11 0v5.18l-4.5 2.59v-5.18l4.5-2.59zM12 7.23l3.5 2.02-3.5 2.02-3.5-2.02L12 7.23z"/>
+          </svg>
+          <span id="bim-modal-title">Modelado de Información de Construcción (BIM 3D)</span>
+        </div>
+        <div class="bim-modal-header-actions">
+          <div class="bim-station-selector">
+            <button class="bim-pill-btn active" data-bim-station="B-8" onclick="window.appPresentation.loadBimStation('B-8')">
+              <span class="pill-dot"></span> B-8 Bosa (Disponible)
+            </button>
+            <span class="bim-pill-badge-soon">Otras Estaciones en Levantamiento</span>
+          </div>
+          <button class="btn-close-modal" onclick="window.appPresentation.closeModals()" title="Cerrar Visor BIM (Esc)">&times;</button>
+        </div>
+      </div>
+      <div class="bim-iframe-container">
+        <iframe id="bim-viewer-frame" class="bim-iframe" src="" title="Visor 3D Modelo BIM Estaciones"></iframe>
+      </div>
+    </div>
+  </div>
+
   <!-- Scrubber Floating Hover Preview Tooltip -->
   <div id="scrubber-floating-tooltip" class="scrubber-floating-tooltip"></div>
 

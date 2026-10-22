@@ -79,14 +79,14 @@ class BomberosMapViewer {
       maxZoom: 18
     });
 
-    // Add default layers
-    esriDark.addTo(this.map);
-    esriDarkLabels.addTo(this.map);
+    // Add default layers: Esri World Imagery (Satellite) + Street/Place Labels
+    esriSatellite.addTo(this.map);
+    esriSatelliteLabels.addTo(this.map);
 
     this.baseLayers = {
+      satellite: L.layerGroup([esriSatellite, esriSatelliteLabels]),
       dark: L.layerGroup([esriDark, esriDarkLabels]),
       streets: osmTiles,
-      satellite: L.layerGroup([esriSatellite, esriSatelliteLabels]),
       esri_streets: esriStreets
     };
 

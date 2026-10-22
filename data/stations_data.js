@@ -384,6 +384,9 @@ const STATIONS_DATA = [
     "lat": 4.61093,
     "lon": -74.18605,
     "photo": "FOTOS/B8 BOSA.jpg",
+    "hasBim": true,
+    "bimModel": "BIM aplicacion/B8_Bosa_visor_3D.html",
+    "bimThumb": "BIM aplicacion/B8_Bosa_vista_general.png",
     "tags": [
       "Compañía 5",
       "Bosa Central",
